@@ -25,6 +25,8 @@
   },
 
   "dependencies": {
+  "request": ">= 3.4",
+  "cheerio": ">= 0.10";
   },
   "devDependencies": {},
   "bundleDependencies": [],
