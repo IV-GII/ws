@@ -2,11 +2,30 @@
 //  OpenShift sample Node application
 var express = require('express');
 var fs      = require('fs');
-
+var request=require('request');
+var cheerio=require('cheerio');
 
 /**
  *  Define the sample application.
  */
+
+function get_objectives( dayid ) {
+    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+dayid;
+    request(URL, function (error, response, body) {
+	if (!error && response.statusCode == 200) {
+	    $ = cheerio.load(body);
+	    var objetivos = $('ol li');
+	    var objectives = new Array;
+	    objetivos.each( function(i, elem) {
+		objectives.push($(this).text());
+	    });
+	    console.log(objectives);
+	    return objectives;
+	}
+    });
+
+}
+	    
 var SampleApp = function() {
 
     //  Scope.
@@ -95,10 +114,22 @@ var SampleApp = function() {
     self.createRoutes = function() {
         self.routes = { };
 
-        self.routes['/asciimo'] = function(req, res) {
-            var link = "http://i.imgur.com/kmbjB.png";
-            res.send("<html><body><img src='" + link + "'></body></html>");
-        };
+        self.routes['/get/:dayid'] = function(req, res) {
+
+	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
+	    request(URL, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+		    var text='';
+		    $ = cheerio.load(body);
+		    var objetivos = $('ol li');
+		    objetivos.each( function(i, elem) {
+			text += "[ ] "+ $(this).text() + "\n";
+		    });
+		    res.setHeader('Content-Type', 'text/plain');
+		    res.send(text);
+		}
+	    });
+	}
 
         self.routes['/'] = function(req, res) {
             res.setHeader('Content-Type', 'text/html');
