@@ -9,23 +9,6 @@ var cheerio=require('cheerio');
  *  Define the sample application.
  */
 
-function get_objectives( dayid ) {
-    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+dayid;
-    request(URL, function (error, response, body) {
-	if (!error && response.statusCode == 200) {
-	    $ = cheerio.load(body);
-	    var objetivos = $('ol li');
-	    var objectives = new Array;
-	    objetivos.each( function(i, elem) {
-		objectives.push($(this).text());
-	    });
-	    console.log(objectives);
-	    return objectives;
-	}
-    });
-
-}
-	    
 var SampleApp = function() {
 
     //  Scope.
@@ -131,6 +114,24 @@ var SampleApp = function() {
 	    });
 	}
 
+	self.routes['/get/:dayid/JSON'] = function(req, res) {
+
+	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
+	    request(URL, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+		    var text='';
+		    $ = cheerio.load(body);
+		    var objetivos_lista = $('ol li');
+		    var objetivos = new Array;
+		    objetivos_lista.each( function(i, elem) {
+			objetivos.push($(this).text());
+		    });
+		    res.setHeader('Content-Type', 'application/JSON');
+		    res.send(objetivos);
+		}
+	    });
+	}
+
         self.routes['/'] = function(req, res) {
             res.setHeader('Content-Type', 'text/html');
             res.send(self.cache_get('index.html') );
@@ -144,7 +145,7 @@ var SampleApp = function() {
      */
     self.initializeServer = function() {
         self.createRoutes();
-        self.app = express.createServer();
+        self.app = express();
 
         //  Add handlers for the app (from the routes).
         for (var r in self.routes) {
