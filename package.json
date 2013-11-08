@@ -1,5 +1,5 @@
 {
-  "name": "OpenShift-Sample-App",
+  "name": "objiv",
   "version": "1.0.0",
   "description": "OpenShift Sample Application",
   "keywords": [
@@ -25,6 +25,7 @@
   },
 
   "dependencies": {
+  "express": ">=3.4",
   "request": ">=2.27",
   "cheerio": ">=0.10"
   },

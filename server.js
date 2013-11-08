@@ -91,6 +91,13 @@ var SampleApp = function() {
     /*  App server functions (main app logic here).                       */
     /*  ================================================================  */
 
+function build_url ( param ) {
+    if ( param.match(/^\d+/)) {
+	return "https://github.com/IV-GII/GII-2013/wiki/Clasedel"+param;	     
+    } else { // non-standard
+	return "https://github.com/IV-GII/GII-2013/wiki/"+param;
+    }
+}
     /**
      *  Create the routing table entries + handlers for the application.
      */
@@ -99,7 +106,7 @@ var SampleApp = function() {
 
         self.routes['/get/:dayid'] = function(req, res) {
 
-	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
+	    var URL=build_url(req.params.dayid);
 	    request(URL, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 		    var text='';
@@ -116,7 +123,7 @@ var SampleApp = function() {
 
 	self.routes['/get/:dayid/JSON'] = function(req, res) {
 
-	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
+	    var URL=build_url(req.params.dayid);
 	    request(URL, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 		    $ = cheerio.load(body);
@@ -132,8 +139,7 @@ var SampleApp = function() {
 	}
 
 	self.routes['/get/:dayid/JSONP/:function'] = function(req, res) {
-
-	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
+	    var URL=build_url(req.params.dayid);
 	    request(URL, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
 		    var text='';
