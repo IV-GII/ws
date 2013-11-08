@@ -12,7 +12,7 @@ var cheerio=require('cheerio');
 var SampleApp = function() {
 
     //  Scope.
-    var self = this;
+    var self= this;
 
 
     /*  ================================================================  */
@@ -119,7 +119,6 @@ var SampleApp = function() {
 	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
 	    request(URL, function (error, response, body) {
 		if (!error && response.statusCode == 200) {
-		    var text='';
 		    $ = cheerio.load(body);
 		    var objetivos_lista = $('ol li');
 		    var objetivos = new Array;
@@ -128,6 +127,24 @@ var SampleApp = function() {
 		    });
 		    res.setHeader('Content-Type', 'application/JSON');
 		    res.send(objetivos);
+		}
+	    });
+	}
+
+	self.routes['/get/:dayid/JSONP/:function'] = function(req, res) {
+
+	    var URL="https://github.com/IV-GII/GII-2013/wiki/Clasedel"+req.params.dayid;
+	    request(URL, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+		    var text='';
+		    $ = cheerio.load(body);
+		    var objetivos_lista = $('ol li');
+		    var objetivos = new Array;
+		    objetivos_lista.each( function(i, elem) {
+			objetivos.push($(this).text());
+		    });
+		    res.setHeader('Content-Type', 'text/plain');
+		    res.send(req.params.function+"("+JSON.stringify(objetivos)+")");
 		}
 	    });
 	}
